@@ -1,6 +1,15 @@
 const bcrypt = require("bcrypt");
 const { User, validateRegister, validateLogin } = require("../models/user");
 
+exports.get_users = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 exports.post_register = async (req, res) => {
   try {
     const { error } = validateRegister(req.body);
