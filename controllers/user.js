@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { User, validateRegister, validateLogin } = require("../modules/user");
+const { User, validateRegister, validateLogin } = require("../models/user");
 
 exports.post_register = async (req, res) => {
   try {
