@@ -1,5 +1,4 @@
 const { Post, validatePost } = require("../models/post");
-const { post_register } = require("./user");
 
 exports.get_post = async (req, res) => {
   try {
@@ -79,7 +78,9 @@ exports.delete_post = async (req, res) => {
       return res.status(404).send("post not found.");
     }
 
-    res.send(post);
+    res.send({
+      message: "post deleted successfully.",
+    });
   } catch (error) {
     console.log(error);
   }

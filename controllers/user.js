@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { User, validateRegister, validateLogin } = require("../models/user");
 
 exports.get_users = async (req, res) => {
@@ -33,8 +34,11 @@ exports.post_register = async (req, res) => {
     });
 
     const newUser = await user.save();
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
-    res.send(newUser);
+    res.header("x-auth-token", token).send(newUser);
   } catch (error) {
     console.log(error);
   }
@@ -62,6 +66,12 @@ exports.post_login = async (req, res) => {
     if (!validPassword) {
       res.status(400).send("invalid password or email!");
     }
+
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.send(token);
   } catch (error) {
     console.log(error);
   }
