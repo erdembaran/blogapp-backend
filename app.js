@@ -21,6 +21,7 @@ app.use(cors());
 
 app.use("/api/users", userRoutes);
 app.use("/api/blogs", postRoutes);
+
 app.use(errorHandler);
 
 const port = process.env.PORT || 3000;

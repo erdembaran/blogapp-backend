@@ -1,8 +1,12 @@
-const { Post, validatePost } = require("../models/post");
+const mongoose = require("mongoose");
+const { Post, validatePost, validateReview } = require("../models/post");
 
 exports.get_post = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate(
+      "author",
+      "name email -_id"
+    );
 
     if (!post) {
       return res.status(404).send("post not found.");
@@ -16,7 +20,7 @@ exports.get_post = async (req, res) => {
 
 exports.get_posts = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().populate("author", "name email -_id");
 
     res.send(posts);
   } catch (error) {
@@ -35,6 +39,9 @@ exports.post_post = async (req, res) => {
     const post = new Post({
       title: req.body.title,
       description: req.body.description,
+      author: req.user.id,
+      likes: req.body.likes,
+      comments: req.body.comments,
     });
 
     const newPost = await post.save();
@@ -80,6 +87,67 @@ exports.delete_post = async (req, res) => {
 
     res.send({
       message: "post deleted successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.post_reviews = async (req, res) => {
+  try {
+    const { error } = validateReview(req.body.reviews[0]);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    const review = {
+      user: req.user.id,
+      comment: req.body.reviews[0].comment,
+    };
+
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).send("post not found.");
+    }
+
+    post.reviews.push(review);
+
+    await post.save();
+
+    const populatedPost = await Post.findById(req.params.id)
+      .populate("author", "name email -_id")
+      .populate("reviews.user", "name email -_id");
+
+    res.status(200).send(populatedPost);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.delete_reviews = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Post not found!");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.reviewId)) {
+      return res.status(400).send("Comment not found!");
+    }
+
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).send("post not found.");
+    }
+
+    post.reviews.id(req.params.reviewId).deleteOne();
+
+    await post.save();
+
+    res.send({
+      message: "comment deleted successfully.",
     });
   } catch (error) {
     console.log(error);
