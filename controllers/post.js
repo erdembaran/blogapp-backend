@@ -93,7 +93,7 @@ exports.delete_post = async (req, res) => {
   }
 };
 
-exports.post_reviews = async (req, res) => {
+exports.post_review = async (req, res) => {
   try {
     const { error } = validateReview(req.body.reviews[0]);
 
