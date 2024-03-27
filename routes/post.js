@@ -9,6 +9,6 @@ router.post("/", auth, postController.post_post);
 router.put("/:id", auth, postController.put_post);
 router.delete("/:id", auth, postController.delete_post);
 router.post("/:id/review", auth, postController.post_reviews);
-router.delete("/:id/review/:reviewId", auth, postController.delete_reviews);
+router.delete("/:id/review/:reviewId", auth, postController.delete_review);
 
 module.exports = router;

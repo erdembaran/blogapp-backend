@@ -126,7 +126,7 @@ exports.post_reviews = async (req, res) => {
   }
 };
 
-exports.delete_reviews = async (req, res) => {
+exports.delete_review = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Post not found!");
