@@ -7,7 +7,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {
+    content: {
       type: String,
       required: true,
     },
@@ -39,7 +39,7 @@ const postSchema = new mongoose.Schema(
 function validatePost(user) {
   const schema = Joi.object({
     title: Joi.string().min(1).required(),
-    description: Joi.string().min(10).required(),
+    content: Joi.string().min(10).required(),
     likes: Joi.number(),
   });
 
