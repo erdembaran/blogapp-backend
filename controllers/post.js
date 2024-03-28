@@ -41,7 +41,7 @@ exports.post_post = async (req, res) => {
       content: req.body.content,
       author: req.user.id,
       likes: req.body.likes,
-      comments: req.body.comments,
+      reviews: req.body.reviews,
     });
 
     const newPost = await post.save();
