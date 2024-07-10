@@ -39,6 +39,7 @@ exports.post_post = async (req, res) => {
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
+      image: req.body.image,
       author: req.user.id,
       likes: req.body.likes,
       reviews: req.body.reviews,
@@ -68,6 +69,7 @@ exports.put_post = async (req, res) => {
 
     post.title = req.body.title;
     post.content = req.body.content;
+    post.image = req.body.image;
 
     const updatedPost = await post.save();
 
