@@ -12,8 +12,14 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     image: {
-      type: String,
-      required: true,
+      publicId: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
     },
     author: {
       type: Schema.Types.ObjectId,
@@ -44,7 +50,6 @@ function validatePost(user) {
   const schema = Joi.object({
     title: Joi.string().min(1).required(),
     content: Joi.string().min(10).required(),
-    image: Joi.string().min(1).required(),
     likes: Joi.number(),
   });
 

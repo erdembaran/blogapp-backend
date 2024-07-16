@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Post, validatePost, validateReview } = require("../models/post");
+const cloudinary = require("../config/cloudinary");
 
 exports.get_post = async (req, res) => {
   try {
@@ -36,10 +37,15 @@ exports.post_post = async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
 
+    const result = await cloudinary.uploader.upload(req.file.path);
+
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      image: req.body.image,
+      image: {
+        publicId: result.public_id,
+        url: result.secure_url,
+      },
       author: req.user.id,
       likes: req.body.likes,
       reviews: req.body.reviews,
@@ -67,9 +73,16 @@ exports.put_post = async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
 
+    await cloudinary.uploader.destroy(post.image.publicId);
+    let result;
+    if (req.file) {
+      result = await cloudinary.uploader.upload(req.file.path);
+    }
+
+    post.image.publicId = result.public_id;
+    post.image.url = result.secure_url;
     post.title = req.body.title;
     post.content = req.body.content;
-    post.image = req.body.image;
 
     const updatedPost = await post.save();
 
@@ -86,6 +99,8 @@ exports.delete_post = async (req, res) => {
     if (!post) {
       return res.status(404).send("post not found.");
     }
+
+    await cloudinary.uploader.destroy(post.image.publicId);
 
     res.send({
       message: "post deleted successfully.",
