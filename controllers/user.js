@@ -6,6 +6,18 @@ const { User, validateRegister, validateLogin } = require("../models/user");
 const dotenv = require("dotenv");
 dotenv.config();
 
+exports.get_user = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) {
+      return res.status(404).send("user not found.");
+    }
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 exports.get_users = async (req, res) => {
   try {
     const users = await User.find().select("-password");
